@@ -14,6 +14,7 @@ describe('Input fields', () => {
         //error message should be visible
         cy.get('#input_error_message').should('not.be.visible')
 
+
         //successfull message should not be visile
         cy.get('#success_message').should('not.be.visible')
     })
