@@ -9,26 +9,73 @@ Assignement 4: add content to the following tests
 describe('Section 1: Functional tests', () => {
 
     it('User can use only same both first and validation passwords', ()=>{
-        // Add test steps for filling in only mandatory fields
-        // Type confirmation password which is different from first password
-        // Assert that submit button is not enabled
-        // Assert that successful message is not visible
-        // Assert that error message is visible
+        // ✔ Add test steps for filling in only mandatory fields 
+        // ✔ Type confirmation password which is different from first password
+        // ✔ Assert that submit button is not enabled
+        // ✔ Assert that successful message is not visible
+        // ✔ Assert that error message is visible
+
+        cy.get('#username').type('Batman')
+        cy.get('#email').type('batman@gotham.com')
+        cy.get('input[data-cy="name"]').type('Bruce')
+        cy.get('#lastName').type('Wayne')
+        cy.get('input[placeholder="8775048423"]').type('555555555')
+        cy.get('#password').type('FirstPassword_123')
+        cy.get('#confirm').type('Joker_342')
+
+        cy.get('h2').contains('Password').click()
+
+        cy.get('.submit_button').should('not.be.enabled')
+        cy.get('#success_message').should('not.be.visible')
+        cy.get('#password_error_message').should('be.visible')
     })
     
     it('User can submit form with all fields added', ()=>{
-        // Add test steps for filling in ALL fields
-        // Assert that submit button is enabled
-        // Assert that after submitting the form system show successful message
+        // ✔ Add test steps for filling in ALL fields
+        // ✔ Assert that submit button is enabled
+        // ✔ Assert that after submitting the form system show successful message
+
+        cy.get('#username').type('Batman')
+        cy.get('#email').type('batman@gotham.com')
+        cy.get('input[data-cy="name"]').type('Bruce')
+        cy.get('#lastName').type('Wayne')
+        cy.get('input[placeholder="8775048423"]').type('555555555')
+        cy.get('#password').type('I_am_Batman')
+        cy.get('#confirm').type('I_am_Batman')
+
+        cy.get('#javascriptFavLanguage').check()
+        cy.get('#vehicle2').check()
+        cy.get('#cars').select('audi')
+        cy.get('#animal').select('cat')
+
+        cy.get('h2').contains('Password').click()
+
+        cy.get('.submit_button').should('be.enabled')        
+        cy.get('.submit_button').click()      
+        cy.get('#success_message').should('be.visible')      
     })
 
     it('User can submit form with valid data and only mandatory fields added', ()=>{
-        // Add test steps for filling in ONLY mandatory fields
-        // Assert that submit button is enabled
-        // Assert that after submitting the form system shows successful message
+        // ✔ Add test steps for filling in ONLY mandatory fields
+        // ✔ Assert that submit button is enabled
+        // ✔ Assert that after submitting the form system shows successful message
 
         // example, how to use function
         inputValidData('johnDoe')
+
+        cy.get('#username').type('Batman')
+        cy.get('#email').type('batman@gotham.com')
+        cy.get('input[data-cy="name"]').type('Bruce')
+        cy.get('#lastName').type('Wayne')
+        cy.get('input[placeholder="8775048423"]').type('555555555')
+        cy.get('#password').type('I_am_Batman')
+        cy.get('#confirm').type('I_am_Batman')
+
+        cy.get('h2').contains('Password').click()
+
+        cy.get('.submit_button').should('be.enabled')        
+        cy.get('.submit_button').click()      
+        cy.get('#success_message').should('be.visible')     
     })
 
     // Add at least 1 test for checking some mandatory field's absence
