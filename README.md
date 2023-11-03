@@ -1,3 +1,5 @@
+<p align="center"><img src="Cypr.png" width="350px"></p>
+
 # Cypress simple tests
 Tests written for basic HTML, CSS and JavaScript project. For reporting Allure is configured.
 
