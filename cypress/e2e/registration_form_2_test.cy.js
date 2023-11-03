@@ -7,14 +7,9 @@ Assignement 4: add content to the following tests
 */
 
 describe('Section 1: Functional tests', () => {
-
     it('User can use only same both first and validation passwords', ()=>{
-        // ✔ Add test steps for filling in only mandatory fields 
-        // ✔ Type confirmation password which is different from first password
-        // ✔ Assert that submit button is not enabled
-        // ✔ Assert that successful message is not visible
-        // ✔ Assert that error message is visible
 
+        // 1. Get and fill form fields
         cy.get('#username').type('Batman')
         cy.get('#email').type('batman@gotham.com')
         cy.get('input[data-cy="name"]').type('Bruce')
@@ -23,18 +18,18 @@ describe('Section 1: Functional tests', () => {
         cy.get('#password').type('FirstPassword_123')
         cy.get('#confirm').type('Joker_342')
 
+        // 2. Activate submit button
         cy.get('h2').contains('Password').click()
 
+        // 3. Assertions
         cy.get('.submit_button').should('not.be.enabled')
         cy.get('#success_message').should('not.be.visible')
         cy.get('#password_error_message').should('be.visible')
     })
     
     it('User can submit form with all fields added', ()=>{
-        // ✔ Add test steps for filling in ALL fields
-        // ✔ Assert that submit button is enabled
-        // ✔ Assert that after submitting the form system show successful message
 
+        // 1. Get and fill form fields
         cy.get('#username').type('Batman')
         cy.get('#email').type('batman@gotham.com')
         cy.get('input[data-cy="name"]').type('Bruce')
@@ -42,44 +37,42 @@ describe('Section 1: Functional tests', () => {
         cy.get('input[placeholder="8775048423"]').type('555555555')
         cy.get('#password').type('I_am_Batman')
         cy.get('#confirm').type('I_am_Batman')
-
         cy.get('#javascriptFavLanguage').check()
         cy.get('#vehicle2').check()
         cy.get('#cars').select('audi')
         cy.get('#animal').select('cat')
 
+        // 2. Activate submit button
         cy.get('h2').contains('Password').click()
 
+        // 3. Assertions
         cy.get('.submit_button').should('be.enabled')        
         cy.get('.submit_button').click()      
         cy.get('#success_message').should('be.visible')      
     })
 
     it('User can submit form with valid data and only mandatory fields added', ()=>{
-        // ✔ Add test steps for filling in ONLY mandatory fields
-        // ✔ Assert that submit button is enabled
-        // ✔ Assert that after submitting the form system shows successful message
-
-        // example, how to use function
         inputValidData('johnDoe')
+    })
 
+    // Add at least 1 test for checking some mandatory field's absence    
+    it('User can not submit form when email is missing', ()=>{
+
+        // 1. Get and fill form fields
         cy.get('#username').type('Batman')
-        cy.get('#email').type('batman@gotham.com')
         cy.get('input[data-cy="name"]').type('Bruce')
         cy.get('#lastName').type('Wayne')
         cy.get('input[placeholder="8775048423"]').type('555555555')
         cy.get('#password').type('I_am_Batman')
         cy.get('#confirm').type('I_am_Batman')
 
+        // 2. Activate submit button
         cy.get('h2').contains('Password').click()
 
-        cy.get('.submit_button').should('be.enabled')        
-        cy.get('.submit_button').click()      
-        cy.get('#success_message').should('be.visible')     
+        // 3. Assertions
+        cy.get('.submit_button').should('not.be.enabled')    
+        cy.get('#success_message').should('not.be.visible')     
     })
-
-    // Add at least 1 test for checking some mandatory field's absence
-
 })
 
 /*
@@ -90,13 +83,26 @@ describe('Section 2: Visual tests', () => {
     it('Check that logo is correct and has correct size', () => {
         cy.log('Will check logo source and size')
         cy.get('img').should('have.attr', 'src').should('include', 'cerebrum_hub_logo')
-        // get element and check its parameter height, to less than 178 and greater than 100
         cy.get('img').invoke('height').should('be.lessThan', 178)
             .and('be.greaterThan', 100)   
     })
 
-    it('My test for second picture', () => {
-        // Create similar test for checking the second picture
+    // Check Cerebrum logo size with function
+    it('Check Cerebrum logo size with function', () => {
+        const srcValue = 'cerebrum_hub_logo.png'
+        const heightLessThan = 178
+        const heightGreaterThan = 100
+
+        imageSizeValidation(srcValue, heightLessThan, heightGreaterThan)
+    }) 
+
+    // Check Cypress logo size with fucntion
+    it.only('Check Cypress logo size with function', () => {
+        const srcValue = 'cypress_logo.png'
+        const heightLessThan = 100
+        const heightGreaterThan = 80
+
+        imageSizeValidation(srcValue, heightLessThan, heightGreaterThan)
     });
 
     it('Check navigation part', () => {
@@ -181,4 +187,12 @@ function inputValidData(username) {
     cy.get('#password').type('MyPass')
     cy.get('#confirm').type('MyPass')
     cy.get('h2').contains('Password').click()
+}
+
+function imageSizeValidation(srcValue, heightLessThan, heightGreaterThan) {
+    cy.log('Will check logo source and size')
+    cy.get(`img[src="${srcValue}"]`) 
+        .invoke('height')
+        .should('be.lessThan', heightLessThan)
+        .should('be.greaterThan', heightGreaterThan)   
 }
