@@ -87,17 +87,23 @@ describe('Section 2: Visual tests', () => {
             .and('be.greaterThan', 100)   
     })
 
-    // Check Cerebrum logo size with function
-    it('Check Cerebrum logo size with function', () => {
-        const srcValue = 'cerebrum_hub_logo.png'
-        const heightLessThan = 178
-        const heightGreaterThan = 100
+    // Check image sizes with function
+    it.only('Check image sizes with function', () => {
 
-        imageSizeValidation(srcValue, heightLessThan, heightGreaterThan)
+        // List of images to test on the page
+        const imageList = [
+            ['cerebrum_hub_logo.png', 178, 100],
+            ['cypress_logo.png', 100, 80]
+        ]
+		
+		for(let i of imageList){
+			imageSizeValidation(i[0], i[1], i[2])
+        }
+
     }) 
 
-    // Check Cypress logo size with fucntion
-    it.only('Check Cypress logo size with function', () => {
+    // Check Cypress logo size with function by src attribute value
+    it('Check Cypress logo size with function', () => {
         const srcValue = 'cypress_logo.png'
         const heightLessThan = 100
         const heightGreaterThan = 80
@@ -126,6 +132,26 @@ describe('Section 2: Visual tests', () => {
 
     // Create similar test for checking the second link 
 
+    it('Check navigation part', () => {
+        cy.log('Checking second link on nav bar')
+        cy.get('nav').children().should('have.length', 2)
+
+        // Get navigation element, find siblings that contains h1 and check if it has Registration form in string
+        cy.get('nav').siblings('h1').should('have.text', 'Registration form number 2')
+        
+        // Get navigation element, find its first child, check the link content and click it
+        cy.get('nav').children().eq(1).should('be.visible')
+            .and('have.attr', 'href', 'registration_form_3.html')
+            .click()
+        
+        // Check that currently opened URL is correct
+        cy.url().should('contain', '/registration_form_3.html')
+        
+        // Go back to previous page
+        cy.go('back')
+        cy.log('Back again in registration form 2')
+    })
+
     it('Check that radio button list is correct', () => {
         // Array of found elements with given selector has 4 elements in total
         cy.get('input[type="radio"]').should('have.length', 4)
@@ -149,6 +175,30 @@ describe('Section 2: Visual tests', () => {
     })
 
     // Create test similar to previous one verifying check boxes
+    it('Check that radio button list is correct', () => {
+        // Array of found elements with given selector has 4 elements in total
+        cy.get('input[type="checkbox"]').should('have.length', 3)
+
+        // Verify checkbox values and labels
+        cy.get('input[type="checkbox"]').eq(0).should('have.value','Bike')
+        cy.get('input[type="checkbox"]').next().eq(0).should('have.text', 'I have a bike')
+        cy.get('input[type="checkbox"]').eq(1).should('have.value','Car')
+        cy.get('input[type="checkbox"]').next().eq(1).should('have.text', 'I have a car');
+        cy.get('input[type="checkbox"]').eq(2).should('have.value','Boat')
+        cy.get('input[type="checkbox"]').next().eq(2).should('have.text', 'I have a boat');
+
+        //Verify default state checkboxes
+        cy.get('input[type="checkbox"]').eq(0).should('not.be.checked')
+        cy.get('input[type="checkbox"]').eq(1).should('not.be.checked')
+        cy.get('input[type="checkbox"]').eq(2).should('not.be.checked')
+
+        // Checking how checkboxes behave
+        cy.get('input[type="checkbox"]').eq(0).check().should('be.checked')
+        cy.get('input[type="checkbox"]').eq(1).check().should('be.checked')
+        cy.get('input[type="checkbox"]').eq(0).should('be.checked')
+        cy.get('input[type="checkbox"]').eq(0).uncheck().should('not.be.checked')
+        cy.get('input[type="checkbox"]').eq(1).uncheck().should('not.be.checked')
+    })
 
     it('Car dropdown is correct', () => {
         // Here is an example how to explicitely create screenshot from the code
@@ -172,7 +222,43 @@ describe('Section 2: Visual tests', () => {
     })
 
 
-    // Create test similar to previous one
+    // Checking favorite animals dropdown
+    it('Favorite animals is correct', () => {
+        // Screenshot on full screen
+        cy.get('#animal').select(1).screenshot('Animals drop-down')
+        cy.screenshot('Full page screenshot')
+
+        // Checking correct length of animals dropdown
+        cy.get('#animal').children().should('have.length', 6)
+        cy.get('#animal').find('option').should('have.length', 6)
+        
+        //Check correct values of dropdown
+        cy.get('#animal').find('option').eq(0).should('have.text', 'Dog')
+        cy.get('#animal').find('option').eq(0).should('have.value', 'dog')
+        cy.get('#animal').find('option').eq(1).should('have.text', 'Cat')
+        cy.get('#animal').find('option').eq(1).should('have.value', 'cat')
+        cy.get('#animal').find('option').eq(2).should('have.text', 'Snake')
+        cy.get('#animal').find('option').eq(2).should('have.value', 'snake')
+        cy.get('#animal').find('option').eq(3).should('have.text', 'Hippo')
+        cy.get('#animal').find('option').eq(3).should('have.value', 'hippo')
+        cy.get('#animal').find('option').eq(4).should('have.text', 'Cow')
+        cy.get('#animal').find('option').eq(4).should('have.value', 'cow')
+        //     ↓↓↓  Mouse and Horse are not the same animals :)  ↓↓↓
+        cy.get('#animal').find('option').eq(5).should('have.text', 'Horse')
+        cy.get('#animal').find('option').eq(5).should('have.value', 'mouse')
+        
+        // Checking dropdown values by mapping elements array
+        cy.get('#animal').find('option').then(options => {
+            const actual = [...options].map(option => option.value)
+            // 'mouse' needs to be fixed on HTML element
+            expect(actual).to.deep.eq(['dog', 'cat', 'snake', 'hippo', 'cow', 'mouse'])            
+            
+            // To print out the array:
+            /* for(const element in actual){
+                cy.log(actual[element])
+            } */
+        })   
+    })
 
 })
 
@@ -190,7 +276,10 @@ function inputValidData(username) {
 }
 
 function imageSizeValidation(srcValue, heightLessThan, heightGreaterThan) {
-    cy.log('Will check logo source and size')
+    cy.log(srcValue)
+    cy.log(typeof(srcValue))
+    const srcValueWithoutExtension = srcValue.replace(/\.[^.]+$/, '');
+    cy.log(`Check that image ${srcValueWithoutExtension} is valid size`)
     cy.get(`img[src="${srcValue}"]`) 
         .invoke('height')
         .should('be.lessThan', heightLessThan)
