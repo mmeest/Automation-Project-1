@@ -257,8 +257,8 @@ describe('Section 2: Visual tests', () => {
             /* for(const element in actual){
                 cy.log(actual[element])
             } */
-        })   
-    })
+        })           
+    })    
 
 })
 
